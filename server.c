@@ -33,7 +33,7 @@ struct thread_element{
 
 void getargs(int *port, int *threads, int *queue_size, char* schedalg, int* max_size, int argc, char *argv[])
 {
-    if (argc < 5) {
+    if (argc < 2) {
 	fprintf(stderr, "Usage: %s <port>\n", argv[0]);
 	exit(1);
     }
@@ -86,11 +86,10 @@ int main(int argc, char *argv[])
     char schedalg[7];
     struct sockaddr_in clientaddr;
 
-    getargs(&port, &threads_num, &queue_size, &schedalg, &max_size, argc, argv);
-
+    getargs(&port, &threads_num, &queue_size, schedalg, &max_size, argc, argv);
     //Create some threads
-    pthread_t* threads = malloc(sizeof(*threads) * threads_num);
-    int** thread_args = malloc(sizeof(*thread_args) * threads_num);
+    pending_queue = QueueCreate(queue_size);
+    running_queue = QueueCreate(threads_num);
 
     for (int i = 0; i < threads_num; i++) {
         struct thread_element* new_thread_element = malloc(sizeof(struct thread_element));
@@ -98,6 +97,7 @@ int main(int argc, char *argv[])
         new_thread_element->thread_total_count = 0;
         new_thread_element->thread_static_count = 0;
         new_thread_element->thread_dynamic_count = 0;
+
         pthread_create(&(new_thread_element->thread), NULL, thread_action, (void*)new_thread_element);
     }
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
         struct timeval arrival;
         gettimeofday(&arrival,NULL);
 
-        QueueAdd(&pending_queue, connfd, arrival);
+        QueueAdd(pending_queue, connfd, arrival);
         pthread_cond_signal(&cond);
         pthread_mutex_unlock(&mutex);
 

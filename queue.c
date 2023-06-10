@@ -49,11 +49,10 @@ void QueueDestroy(Queue* queue){
 
 int QueueGetSize(Queue* queue){
     if (!queue){
-        return -1;
+        return 0;
     }
     return queue->size;
 }
-
 
 QueueResult QueueAdd(Queue* queue, int descriptor, struct timeval arrival) {
     if(!queue) {

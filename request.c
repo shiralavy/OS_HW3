@@ -176,7 +176,7 @@ void requestServeStatic(int fd, char *filename, int filesize, struct timeval arr
 }
 
 // handle a request
-void requestHandle (int fd, struct timeval arrival, struct timeval dispatch, int thread_id, int* total_count, int* static_count, int* dynamic_count)
+void requestHandle(int fd, struct timeval arrival, struct timeval dispatch, int thread_id, int* total_count, int* static_count, int* dynamic_count)
 {
     (*total_count)++;
    int is_static;
