@@ -8,7 +8,7 @@
 // ---------------- Node funcs ---------------------------
 
 Node* NodeCreate(int descriptor, struct timeval arrival){
-    Node* node = malloc(sizeof(node));
+    Node* node = malloc(sizeof(*node));
     if (!node){
         return NULL;
     }
@@ -25,7 +25,7 @@ void NodeDelete(Node* node){
 // ---------------- Queue funcs ---------------------------
 
 Queue* QueueCreate(int max_size) {
-    Queue* queue = malloc(sizeof(queue));
+    Queue* queue = malloc(sizeof(*queue));
     if (!queue) {
         return NULL;
     }
