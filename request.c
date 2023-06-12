@@ -23,6 +23,13 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
    Rio_writen(fd, buf, strlen(buf));
    printf("%s", buf);
 
+    sprintf(buf, "Content-Type: text/html\r\n");
+    Rio_writen(fd, buf, strlen(buf));
+    printf("%s", buf);
+
+    sprintf(buf, "Content-Length: %lu\r\n", strlen(body));
+    Rio_writen(fd, buf, strlen(buf));
+    printf("%s", buf);
 
     sprintf(buf, "%sStat-Req-Arrival:: %lu.%06lu\r\n", buf, arrival.tv_sec, arrival.tv_usec);
     sprintf(buf, "%sStat-Req-Dispatch:: %lu.%06lu\r\n", buf, dispatch.tv_sec, dispatch.tv_usec);
@@ -31,13 +38,7 @@ void requestError(int fd, char *cause, char *errnum, char *shortmsg, char *longm
     sprintf(buf, "%sStat-Thread-Static:: %d\r\n", buf, *static_count);
     sprintf(buf, "%sStat-Thread-Dynamic:: %d\r\n", buf, *dynamic_count);
 
-    sprintf(buf, "Content-Type: text/html\r\n");
-    Rio_writen(fd, buf, strlen(buf));
-    printf("%s", buf);
 
-    sprintf(buf, "Content-Length: %lu\r\n\r\n", strlen(body));
-    Rio_writen(fd, buf, strlen(buf));
-    printf("%s", buf);
 
 
     // Write out the content

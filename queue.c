@@ -24,7 +24,7 @@ void NodeDelete(Node* node){
 
 // ---------------- Queue funcs ---------------------------
 
-Queue* QueueCreate(int max_size) {
+Queue* QueueCreate() {
     Queue* queue = malloc(sizeof(*queue));
     if (!queue) {
         return NULL;
@@ -32,7 +32,7 @@ Queue* QueueCreate(int max_size) {
     queue->head = NULL;
     queue->tail = NULL;
     queue->size = 0;
-    queue->max_size = max_size;
+    //queue->max_size = max_size;
     return queue;
 }
 

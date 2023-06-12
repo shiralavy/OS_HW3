@@ -24,14 +24,9 @@ typedef struct Queue_t {
     Node* head; //head is the oldest in the queue
     Node* tail;
     int size;
-    int max_size;
+    //int max_size;
 } Queue ;
 
-//typedef struct WorkerThreads_t {
-//    Queue pending;
-//    int running;
-//    int max_queue_size;
-//} WorkerThreads;
 
 // ---------------- Node funcs ---------------------------
 
@@ -39,7 +34,7 @@ Node* NodeCreate(int descriptor, struct timeval arrival);
 void NodeDelete(Node* node);
 
 // ---------------- Queue funcs ---------------------------
-Queue* QueueCreate(int max_size);
+Queue* QueueCreate();
 void QueueDestroy(Queue* queue);
 int QueueGetSize(Queue* queue);
 QueueResult QueueAdd(Queue* queue, int descriptor,  struct timeval arrival);

@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
 
     getargs(&port, &threads_num, &queue_size, schedalg, &max_size, argc, argv);
     //Create some threads
-    pending_queue = QueueCreate(queue_size);
-    running_queue = QueueCreate(threads_num);
+    pending_queue = QueueCreate();
+    running_queue = QueueCreate();
 
     for (int i = 0; i < threads_num; i++) {
         struct thread_element* new_thread_element = malloc(sizeof(struct thread_element));
@@ -106,13 +106,18 @@ int main(int argc, char *argv[])
     pthread_cond_init(&cond, NULL);
     pthread_cond_init(&block_cond, NULL);
 
+    int running_q_size;
+    int pending_q_size;
+
     listenfd = Open_listenfd(port);
     while (1) {
         clientlen = sizeof(clientaddr);
         connfd = Accept(listenfd, (SA *)&clientaddr, (socklen_t *) &clientlen);
 
         pthread_mutex_lock(&mutex);
-        if(QueueGetSize(&running_queue) + QueueGetSize(&pending_queue) == queue_size) {
+        running_q_size = QueueGetSize(&running_queue);
+        pending_q_size = QueueGetSize(&pending_queue);
+        if(running_q_size + pending_q_size >= queue_size) {
             if(strcmp("block", schedalg) == 0) {
                 while(QueueGetSize(&running_queue) + QueueGetSize(&pending_queue) == queue_size) {
                     pthread_cond_wait(&block_cond, &mutex);
@@ -154,7 +159,7 @@ int main(int argc, char *argv[])
             }
             else if (strcmp("random", schedalg) == 0){
                 if (QueueGetSize(pending_queue) == 0) {
-                    close(connfd);
+                    Close(connfd);
                     pthread_mutex_unlock(&mutex);
                     continue;
                 }
