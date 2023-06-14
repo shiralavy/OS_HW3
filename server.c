@@ -49,7 +49,6 @@ void getargs(int *port, int *threads, int *queue_size, char* schedalg, int* max_
     }
 }
 
-
 void* thread_action(void *args) {
     struct thread_element* thread_element = (struct thread_element*)args;
     while(1){
@@ -57,13 +56,13 @@ void* thread_action(void *args) {
         while (QueueGetSize(pending_queue) == 0){
             pthread_cond_wait(&cond, &mutex);
         }
-        Node* head = QueueGetByIndex(pending_queue, 0);
+        Node* head = QueueGetHead(pending_queue);
         int fd = head->descriptor;
         struct timeval arrival = head->arrival;
         QueueRemoveHead(pending_queue);
         QueueAdd(running_queue, fd, arrival);
-
         pthread_mutex_unlock(&mutex);
+
         struct timeval handeling;
         gettimeofday(&handeling, NULL);
         struct timeval dispatch;
@@ -115,11 +114,11 @@ int main(int argc, char *argv[])
         connfd = Accept(listenfd, (SA *)&clientaddr, (socklen_t *) &clientlen);
 
         pthread_mutex_lock(&mutex);
-        running_q_size = QueueGetSize(&running_queue);
-        pending_q_size = QueueGetSize(&pending_queue);
+        running_q_size = QueueGetSize(running_queue);
+        pending_q_size = QueueGetSize(pending_queue);
         if(running_q_size + pending_q_size >= queue_size) {
             if(strcmp("block", schedalg) == 0) {
-                while(QueueGetSize(&running_queue) + QueueGetSize(&pending_queue) == queue_size) {
+                while((QueueGetSize(running_queue) + QueueGetSize(pending_queue)) == queue_size) {
                     pthread_cond_wait(&block_cond, &mutex);
                 }
             }
@@ -140,7 +139,7 @@ int main(int argc, char *argv[])
                 }
             }
             else if (strcmp("bf", schedalg) == 0){
-                while(QueueGetSize(&running_queue) + QueueGetSize(&pending_queue) > 0) {
+                while((QueueGetSize(running_queue) + QueueGetSize(pending_queue)) > 0) {
                     pthread_cond_wait(&cond, &mutex);
                 }
             }
@@ -164,7 +163,7 @@ int main(int argc, char *argv[])
                     continue;
                 }
                 else {
-                    int half = QueueGetSize(pending_queue)/2;
+                    int half = (int) ((QueueGetSize(pending_queue) + 1) / 2);
                     int index;
                     for (int i = 0; i < half ;i++) {
                        index = rand() % QueueGetSize(pending_queue);

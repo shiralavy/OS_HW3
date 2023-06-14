@@ -216,7 +216,7 @@ void requestHandle(int fd, struct timeval arrival, struct timeval dispatch, int 
                       arrival, dispatch, thread_id, total_count, static_count, dynamic_count);
          return;
       }
-       (*static_count)++;
+      (*static_count)++;
       requestServeStatic(fd, filename, sbuf.st_size, arrival, dispatch, thread_id, total_count, static_count, dynamic_count);
 
    } else { //dynamic

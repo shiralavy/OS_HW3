@@ -43,5 +43,6 @@ int QueueDeleteByIndex(Queue* queue, int index);
 Node* QueueGetByDescriptor(Queue* queue, int descriptor);
 Node* QueueGetByIndex (Queue* queue, int index);
 int QueueRemoveHead(Queue* queue);
+Node* QueueGetHead(Queue* queue);
 
 #endif //HW3_WET_OS_QUEUE_H

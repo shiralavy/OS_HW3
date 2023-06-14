@@ -156,6 +156,13 @@ Node* QueueGetByIndex(Queue* queue, int index){
     return NULL;
 }
 
+Node* QueueGetHead(Queue* queue) {
+    if (!queue || QueueGetSize(queue) == 0) {
+        return NULL;
+    }
+    return queue->head;
+}
+
 int QueueRemoveHead(Queue* queue){
     if (!queue || QueueGetSize(queue) == 0){
         return -1;
