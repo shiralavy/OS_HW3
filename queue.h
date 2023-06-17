@@ -10,7 +10,8 @@ typedef enum QueueResult_t {
     QUEUE_SUCCESS,
     QUEUE_NULL_ARGUMENT,
     QUEUE_EMPTY,
-    QUEUE_ADD_FAILED
+    QUEUE_ADD_FAILED,
+    QUEUE_FULL
 } QueueResult;
 
 typedef struct Node_t {
@@ -24,6 +25,7 @@ typedef struct Queue_t {
     Node* head; //head is the oldest in the queue
     Node* tail;
     int size;
+    int max_size;
     //int max_size;
 } Queue ;
 
@@ -34,7 +36,7 @@ Node* NodeCreate(int descriptor, struct timeval arrival);
 void NodeDelete(Node* node);
 
 // ---------------- Queue funcs ---------------------------
-Queue* QueueCreate();
+Queue* QueueCreate(int max_size);
 void QueueDestroy(Queue* queue);
 int QueueGetSize(Queue* queue);
 QueueResult QueueAdd(Queue* queue, int descriptor,  struct timeval arrival);

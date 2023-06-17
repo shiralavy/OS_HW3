@@ -24,7 +24,7 @@ void NodeDelete(Node* node){
 
 // ---------------- Queue funcs ---------------------------
 
-Queue* QueueCreate() {
+Queue* QueueCreate(int max_size) {
     Queue* queue = malloc(sizeof(*queue));
     if (!queue) {
         return NULL;
@@ -32,7 +32,7 @@ Queue* QueueCreate() {
     queue->head = NULL;
     queue->tail = NULL;
     queue->size = 0;
-    //queue->max_size = max_size;
+    queue->max_size = max_size;
     return queue;
 }
 
@@ -55,11 +55,17 @@ int QueueGetSize(Queue* queue){
 }
 
 QueueResult QueueAdd(Queue* queue, int descriptor, struct timeval arrival) {
+    if(queue->max_size == queue->size) {
+        printf("queue full");
+        return QUEUE_FULL;
+    }
     if(!queue) {
+        printf("queue null argument");
         return QUEUE_NULL_ARGUMENT;
     }
     Node* new_node = NodeCreate(descriptor, arrival);
     if (!new_node) {
+        printf("queue add failed");
         return QUEUE_ADD_FAILED;
     }
     if(QueueGetSize(queue) == 0) {
@@ -71,6 +77,7 @@ QueueResult QueueAdd(Queue* queue, int descriptor, struct timeval arrival) {
         queue->tail = new_node;
     }
     queue->size++;
+    printf("queue success");
     return QUEUE_SUCCESS;
 }
 
@@ -110,8 +117,8 @@ int QueueDeleteByIndex(Queue* queue, int index){
     }
     if (to_delete == queue->head){
         if (queue->tail != NULL && to_delete == queue->tail){ //node is the only element in the queue
-           queue->tail = NULL;
-           queue->head = NULL;
+            queue->tail = NULL;
+            queue->head = NULL;
         }
         else{ //node is the head of the queue
             queue->head = to_delete->next;
