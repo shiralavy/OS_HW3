@@ -190,14 +190,18 @@ int main(int argc, char *argv[])
                 }
                 else {
                     printf("pending_size_random: %d\n",(QueueGetSize(pending_queue)));
-                    int half = (int) ((QueueGetSize(pending_queue)) / 2);
+                    int half = (int) ((QueueGetSize(pending_queue) + 1) / 2);
                     int index;
                     printf("half: %d\n", half);
                     for (int i = 0; i < half ;i++) {
                         index = rand() % QueueGetSize(pending_queue);
+                        printf("index %d\n", index);
                         int fd = QueueDeleteByIndex(pending_queue, index);
                         Close(fd);
                     }
+                    Close(connfd);
+                    pthread_mutex_unlock(&mutex);
+                    continue;
                 }
             }
         }

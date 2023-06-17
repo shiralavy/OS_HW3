@@ -85,23 +85,40 @@ QueueResult QueueDeleteByDescriptor(Queue* queue, int descriptor) {
     if (!queue) {
         return QUEUE_EMPTY;
     }
-    Node *to_delete = QueueGetByDescriptor(queue, descriptor);
+    Node* to_delete = queue->head;
+    int index = 0;
+    while (to_delete) {
+        if (to_delete->descriptor == descriptor) {
+            break;
+        }
+        index++;
+        to_delete = to_delete->next;
+    }
     if (!to_delete) {
         return QUEUE_NULL_ARGUMENT;
     }
     if (to_delete == queue->head){
         if (queue->tail != NULL && to_delete == queue->tail){ //node is the only element in the queue
+            printf("delete head and tail\n");
             queue->tail = NULL;
             queue->head = NULL;
         }
         else{ //node is the head of the queue
+            printf("delete only head\n");
             queue->head = to_delete->next;
         }
     }
     else if (queue->tail != NULL && to_delete == queue->tail){
+        printf("delete tail\n");
+        Node *new_tail = QueueGetByIndex(queue, index-1);
+        queue->tail = new_tail;
         queue->tail->next = NULL;
     }
-
+    else {
+        printf("delete %d\n", index);
+        Node *prev_to_delete = QueueGetByIndex(queue, index-1);
+        prev_to_delete->next = to_delete->next;
+    }
     NodeDelete(to_delete);
     queue->size--;
     return QUEUE_SUCCESS;
@@ -117,16 +134,27 @@ int QueueDeleteByIndex(Queue* queue, int index){
     }
     if (to_delete == queue->head){
         if (queue->tail != NULL && to_delete == queue->tail){ //node is the only element in the queue
+            printf("delete head and tail\n");
             queue->tail = NULL;
             queue->head = NULL;
         }
         else{ //node is the head of the queue
+            printf("delete only head\n");
             queue->head = to_delete->next;
         }
     }
     else if (queue->tail != NULL && to_delete == queue->tail){
+        printf("delete tail\n");
+        Node *new_tail = QueueGetByIndex(queue, index-1);
+        queue->tail = new_tail;
         queue->tail->next = NULL;
     }
+    else {
+        printf("delete %d\n", index);
+        Node *prev_to_delete = QueueGetByIndex(queue, index-1);
+        prev_to_delete->next = to_delete->next;
+    }
+
     int descriptor =  to_delete->descriptor;
     NodeDelete(to_delete);
     queue->size--;
@@ -139,8 +167,10 @@ Node* QueueGetByDescriptor(Queue* queue, int descriptor){
         return NULL;
     }
     Node* temp = queue->head;
+    int index;
     while (temp){
         if (temp->descriptor == descriptor){
+
             return temp;
         }
         temp = temp->next;
